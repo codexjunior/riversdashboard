@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff Dashboard — Rivers Dental Clinic</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blue:#0A3A63;--teal:#00A9A5;--teal-light:#E6F7F7;
+  --white:#fff;--light:#F2F6F9;--border:#D8E8F0;
+  --text:#1A2B3C;--muted:#6B7A8D;--red:#b91c1c}
+body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);min-height:100vh}
+
+/* ── LOGIN SCREEN ── */
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:linear-gradient(135deg,var(--blue) 0%,#0d5295 100%)}
+.login-card{background:white;border-radius:24px;padding:3rem 2.5rem;max-width:420px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,0.25)}
+.login-logo{display:flex;align-items:center;gap:0.75rem;margin-bottom:2rem}
+.login-logo img{width:48px;height:48px;object-fit:contain;border-radius:50%}
+.login-logo-text{font-family:'Libre Baskerville',serif;font-size:1rem;font-weight:700;color:var(--blue)}
+.login-logo-sub{font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);font-weight:500}
+.login-card h1{font-family:'Libre Baskerville',serif;font-size:1.5rem;color:var(--blue);margin-bottom:0.5rem}
+.login-card p{font-size:0.85rem;color:var(--muted);margin-bottom:2rem}
+.login-field{display:flex;flex-direction:column;gap:0.4rem;margin-bottom:1.25rem}
+.login-field label{font-size:0.7rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)}
+.login-field input{padding:0.8rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-size:0.9rem;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s}
+.login-field input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,169,165,0.1)}
+.login-btn{width:100%;padding:0.9rem;background:var(--teal);color:white;border:none;border-radius:100px;font-size:0.9rem;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:background 0.2s}
+.login-btn:hover{background:var(--blue)}
+.login-error{background:#fff2f2;border:1px solid #f5a0a0;color:var(--red);padding:0.75rem 1rem;border-radius:10px;font-size:0.83rem;margin-bottom:1rem;display:none}
+
+/* ── DASHBOARD ── */
+.dashboard{display:none}
+
+/* Header */
+.dash-header{background:var(--blue);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.dash-brand{display:flex;align-items:center;gap:0.75rem}
+.dash-brand img{width:36px;height:36px;object-fit:contain;border-radius:50%}
+.dash-brand-text{font-family:'Libre Baskerville',serif;font-size:0.95rem;font-weight:700;color:white}
+.dash-brand-sub{font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.55);font-weight:500;display:block}
+.dash-header-right{display:flex;align-items:center;gap:1rem}
+.dash-tag{font-size:0.7rem;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.8);padding:0.3rem 0.75rem;border-radius:100px;font-weight:500}
+.logout-btn{font-size:0.75rem;color:rgba(255,255,255,0.6);background:none;border:1px solid rgba(255,255,255,0.2);padding:0.3rem 0.75rem;border-radius:100px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
+.logout-btn:hover{color:white;border-color:rgba(255,255,255,0.5)}
+
+/* Stats bar */
+.stats-bar{background:white;border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;gap:2rem;align-items:center;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column}
+.stat-val{font-size:1.4rem;font-weight:700;color:var(--blue);font-family:'Libre Baskerville',serif;line-height:1}
+.stat-label{font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:0.2rem}
+.stats-divider{width:1px;height:36px;background:var(--border)}
+
+/* Controls */
+.controls{padding:1.25rem 2rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap;background:white;border-bottom:1px solid var(--border)}
+.search-wrap{position:relative;flex:1;min-width:200px}
+.search-wrap input{width:100%;padding:0.65rem 1rem 0.65rem 2.5rem;border:1.5px solid var(--border);border-radius:10px;font-size:0.85rem;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s}
+.search-wrap input:focus{border-color:var(--teal)}
+.search-icon{position:absolute;left:0.8rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.85rem}
+.filter-select{padding:0.65rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-size:0.85rem;font-family:'Inter',sans-serif;color:var(--text);background:white;cursor:pointer;outline:none}
+.filter-select:focus{border-color:var(--teal)}
+.refresh-btn{padding:0.65rem 1.25rem;background:var(--teal);color:white;border:none;border-radius:10px;font-size:0.83rem;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;gap:0.4rem}
+.refresh-btn:hover{background:var(--blue)}
+
+/* Main content */
+.dash-content{padding:2rem;max-width:1400px;margin:0 auto}
+
+/* Loading / empty */
+.state-msg{text-align:center;padding:4rem 2rem;color:var(--muted)}
+.state-msg .icon{font-size:2.5rem;margin-bottom:1rem}
+.state-msg p{font-size:0.92rem}
+
+/* Appointment list */
+.appt-list{display:flex;flex-direction:column;gap:0.75rem}
+
+/* Date group header */
+.date-group-header{font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);padding:0.5rem 0;margin-top:1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.75rem}
+.date-group-header:first-child{margin-top:0}
+.date-group-count{background:var(--teal-light);color:var(--teal);padding:0.15rem 0.5rem;border-radius:100px;font-size:0.65rem;font-weight:700}
+
+/* Appointment card */
+.appt-card{background:white;border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;display:grid;grid-template-columns:2fr 1.5fr 1.5fr 1.5fr 1fr;gap:1rem;align-items:center;transition:box-shadow 0.2s,border-color 0.2s}
+.appt-card:hover{box-shadow:0 4px 20px rgba(10,58,99,0.08);border-color:#b0cfe0}
+.appt-field-label{font-size:0.62rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:0.25rem}
+.appt-field-value{font-size:0.88rem;color:var(--text);font-weight:500}
+.appt-field-value.name{font-weight:700;color:var(--blue);font-size:0.95rem}
+.appt-field-value.phone a{color:var(--teal);text-decoration:none;font-weight:600}
+.appt-field-value.phone a:hover{text-decoration:underline}
+.appt-field-value.email a{color:var(--muted);text-decoration:none;font-size:0.82rem}
+.appt-field-value.email a:hover{color:var(--teal)}
+.service-badge{display:inline-block;background:var(--teal-light);color:var(--teal);padding:0.25rem 0.65rem;border-radius:100px;font-size:0.72rem;font-weight:600}
+.time-badge{display:inline-flex;align-items:center;gap:0.3rem;background:var(--blue);color:white;padding:0.3rem 0.75rem;border-radius:100px;font-size:0.75rem;font-weight:600}
+
+/* Today highlight */
+.appt-card.today{border-left:3px solid var(--teal)}
+
+/* Mobile */
+@media(max-width:860px){
+  .appt-card{grid-template-columns:1fr 1fr;gap:0.75rem}
+  .stats-bar{gap:1rem}
+  .dash-content{padding:1rem}
+  .controls{padding:1rem}
+}
+@media(max-width:560px){
+  .appt-card{grid-template-columns:1fr}
+  .dash-header{padding:1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ── -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="https://afridoctor.com/cdn/storage/userFiles/BStstTNLapGT8haog/original/BStstTNLapGT8haog.png" alt="Rivers Dental">
+      <div>
+        <div class="login-logo-text">Rivers Dental Clinic</div>
+        <span class="login-logo-sub">Staff Portal</span>
+      </div>
+    </div>
+    <h1>Staff Dashboard</h1>
+    <p>Enter the dashboard password to view appointments.</p>
+    <div class="login-error" id="loginError">Incorrect password. Please try again.</div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="passwordInput" placeholder="Enter dashboard password" autocomplete="current-password">
+    </div>
+    <button class="login-btn" id="loginBtn">Access Dashboard</button>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div class="dashboard" id="dashboard">
+
+  <!-- Header -->
+  <div class="dash-header">
+    <div class="dash-brand">
+      <img src="https://afridoctor.com/cdn/storage/userFiles/BStstTNLapGT8haog/original/BStstTNLapGT8haog.png" alt="Rivers Dental">
+      <div>
+        <div class="dash-brand-text">Rivers Dental Clinic</div>
+        <span class="dash-brand-sub">Staff Dashboard</span>
+      </div>
+    </div>
+    <div class="dash-header-right">
+      <span class="dash-tag">🔒 Private</span>
+      <button class="logout-btn" id="logoutBtn">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="stat-val" id="statTotal">—</span>
+      <span class="stat-label">Upcoming</span>
+    </div>
+    <div class="stats-divider"></div>
+    <div class="stat">
+      <span class="stat-val" id="statToday">—</span>
+      <span class="stat-label">Today</span>
+    </div>
+    <div class="stats-divider"></div>
+    <div class="stat">
+      <span class="stat-val" id="statWeek">—</span>
+      <span class="stat-label">This Week</span>
+    </div>
+    <div class="stats-divider"></div>
+    <div class="stat">
+      <span class="stat-val" id="statService">—</span>
+      <span class="stat-label">Most Booked</span>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search by name, phone, email or service…">
+    </div>
+    <select class="filter-select" id="serviceFilter">
+      <option value="">All Services</option>
+      <option>Dental Checkup</option>
+      <option>Teeth Cleaning</option>
+      <option>Tooth Extraction</option>
+      <option>Dental Consultation</option>
+      <option>Teeth Whitening</option>
+      <option>Root Canal Treatment</option>
+      <option>Dental Filling</option>
+    </select>
+    <button class="refresh-btn" id="refreshBtn">↻ Refresh</button>
+  </div>
+
+  <!-- Appointment list -->
+  <div class="dash-content">
+    <div id="apptList">
+      <div class="state-msg">
+        <div class="icon">📅</div>
+        <p>Loading appointments…</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── Config ────────────────────────────────────────────────────────────────
+  // The DASHBOARD_TOKEN is baked into this URL — the URL itself is the secret
+  // Set this to match your DASHBOARD_TOKEN environment variable in Vercel
+  const API_TOKEN = "REPLACE_WITH_YOUR_DASHBOARD_TOKEN";
+  const API_BASE = ""; // same Vercel project
+
+  // ── State ─────────────────────────────────────────────────────────────────
+  let allAppointments = [];
+  let currentPassword = "";
+
+  // ── Login ─────────────────────────────────────────────────────────────────
+  document.getElementById("loginBtn").addEventListener("click", attemptLogin);
+  document.getElementById("passwordInput").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") attemptLogin();
+  });
+
+  async function attemptLogin() {
+    const password = document.getElementById("passwordInput").value.trim();
+    if (!password) return;
+
+    document.getElementById("loginBtn").textContent = "Checking…";
+    document.getElementById("loginError").style.display = "none";
+
+    try {
+      const res = await fetch(`${API_BASE}/api/appointments?token=${API_TOKEN}&password=${encodeURIComponent(password)}`);
+      if (res.ok) {
+        currentPassword = password;
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+        const data = await res.json();
+        allAppointments = data.appointments;
+        renderAll();
+      } else {
+        document.getElementById("loginError").style.display = "block";
+        document.getElementById("loginBtn").textContent = "Access Dashboard";
+      }
+    } catch {
+      document.getElementById("loginError").textContent = "Could not connect. Please try again.";
+      document.getElementById("loginError").style.display = "block";
+      document.getElementById("loginBtn").textContent = "Access Dashboard";
+    }
+  }
+
+  // ── Logout ────────────────────────────────────────────────────────────────
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    currentPassword = "";
+    allAppointments = [];
+    document.getElementById("passwordInput").value = "";
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("loginScreen").style.display = "flex";
+  });
+
+  // ── Refresh ───────────────────────────────────────────────────────────────
+  document.getElementById("refreshBtn").addEventListener("click", async () => {
+    document.getElementById("refreshBtn").textContent = "↻ Loading…";
+    try {
+      const res = await fetch(`${API_BASE}/api/appointments?token=${API_TOKEN}&password=${encodeURIComponent(currentPassword)}`);
+      const data = await res.json();
+      allAppointments = data.appointments;
+      renderAll();
+    } catch {}
+    document.getElementById("refreshBtn").textContent = "↻ Refresh";
+  });
+
+  // ── Search & filter ───────────────────────────────────────────────────────
+  document.getElementById("searchInput").addEventListener("input", renderAll);
+  document.getElementById("serviceFilter").addEventListener("change", renderAll);
+
+  // ── Render ────────────────────────────────────────────────────────────────
+  function renderAll() {
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const service = document.getElementById("serviceFilter").value;
+
+    let filtered = allAppointments.filter(a => {
+      const matchSearch = !search ||
+        a.patient.toLowerCase().includes(search) ||
+        a.phone.toLowerCase().includes(search) ||
+        a.email.toLowerCase().includes(search) ||
+        a.service.toLowerCase().includes(search);
+      const matchService = !service || a.service === service;
+      return matchSearch && matchService;
+    });
+
+    updateStats(filtered);
+    renderList(filtered);
+  }
+
+  function updateStats(appointments) {
+    const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Accra" });
+    const weekEnd = new Date();
+    weekEnd.setDate(weekEnd.getDate() + 7);
+
+    const today = appointments.filter(a => a.dateRaw.startsWith(todayStr)).length;
+    const week = appointments.filter(a => new Date(a.dateRaw) <= weekEnd).length;
+
+    // Most booked service
+    const serviceCounts = {};
+    appointments.forEach(a => { serviceCounts[a.service] = (serviceCounts[a.service] || 0) + 1; });
+    const mostBooked = Object.entries(serviceCounts).sort((a,b) => b[1]-a[1])[0];
+
+    document.getElementById("statTotal").textContent = appointments.length;
+    document.getElementById("statToday").textContent = today;
+    document.getElementById("statWeek").textContent = week;
+    document.getElementById("statService").textContent = mostBooked ? mostBooked[0].split(" ")[0] : "—";
+  }
+
+  function renderList(appointments) {
+    const list = document.getElementById("apptList");
+
+    if (appointments.length === 0) {
+      list.innerHTML = `<div class="state-msg"><div class="icon">🦷</div><p>No appointments found.</p></div>`;
+      return;
+    }
+
+    const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Accra" });
+
+    // Group by date
+    const groups = {};
+    appointments.forEach(a => {
+      const key = a.dateRaw.split("T")[0];
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(a);
+    });
+
+    let html = '<div class="appt-list">';
+
+    Object.entries(groups).forEach(([dateKey, appts]) => {
+      const isToday = dateKey === todayStr;
+      const label = isToday ? `📅 Today — ${appts[0].date}` : appts[0].date;
+
+      html += `
+        <div class="date-group-header">
+          ${label}
+          <span class="date-group-count">${appts.length} appointment${appts.length > 1 ? "s" : ""}</span>
+        </div>`;
+
+      appts.forEach(a => {
+        html += `
+        <div class="appt-card${isToday ? " today" : ""}">
+          <div>
+            <div class="appt-field-label">Patient</div>
+            <div class="appt-field-value name">${a.patient}</div>
+          </div>
+          <div>
+            <div class="appt-field-label">Phone</div>
+            <div class="appt-field-value phone"><a href="tel:${a.phone.replace(/\s/g,'')}">${a.phone}</a></div>
+          </div>
+          <div>
+            <div class="appt-field-label">Email</div>
+            <div class="appt-field-value email"><a href="mailto:${a.email}">${a.email}</a></div>
+          </div>
+          <div>
+            <div class="appt-field-label">Service</div>
+            <div class="appt-field-value"><span class="service-badge">${a.service}</span></div>
+          </div>
+          <div>
+            <div class="appt-field-label">Time</div>
+            <div class="appt-field-value"><span class="time-badge">🕐 ${a.time}</span></div>
+          </div>
+        </div>`;
+      });
+    });
+
+    html += '</div>';
+    list.innerHTML = html;
+  }
+</script>
+</body>
+</html>
