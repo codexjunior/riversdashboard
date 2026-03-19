@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Staff Dashboard — Rivers Dental Clinic</title>
+<link rel="icon" type="image/png" href="https://afridoctor.com/cdn/storage/userFiles/BStstTNLapGT8haog/original/BStstTNLapGT8haog.png">
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -18,9 +19,9 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
 .login-card{background:white;border-radius:24px;padding:3rem 2.5rem;max-width:420px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,0.25)}
 .login-logo{display:flex;align-items:center;gap:0.75rem;margin-bottom:2rem}
 .login-logo img{width:48px;height:48px;object-fit:contain;border-radius:50%}
-.login-logo-name{font-family:'Libre Baskerville',serif;font-size:1rem;font-weight:700;color:var(--blue)}
+.login-logo-name{ font-size:1rem;font-weight:700;color:var(--blue)}
 .login-logo-sub{font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);font-weight:500;display:block}
-.login-card h1{font-family:'Libre Baskerville',serif;font-size:1.5rem;color:var(--blue);margin-bottom:0.5rem}
+.login-card h1{ font-size:1.5rem;color:var(--blue);margin-bottom:0.5rem}
 .login-card p{font-size:0.85rem;color:var(--muted);margin-bottom:2rem}
 .login-field{display:flex;flex-direction:column;gap:0.4rem;margin-bottom:1.25rem}
 .login-field label{font-size:0.7rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)}
@@ -36,7 +37,7 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
 .dash-header{background:var(--blue);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .dash-brand{display:flex;align-items:center;gap:0.75rem}
 .dash-brand img{width:36px;height:36px;object-fit:contain;border-radius:50%}
-.dash-brand-name{font-family:'Libre Baskerville',serif;font-size:0.95rem;font-weight:700;color:white}
+.dash-brand-name{ font-size:0.95rem;font-weight:700;color:white}
 .dash-brand-sub{font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.55);display:block}
 .dash-right{display:flex;align-items:center;gap:1rem}
 .dash-tag{font-size:0.7rem;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.8);padding:0.3rem 0.75rem;border-radius:100px}
@@ -46,7 +47,7 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
 /* Stats */
 .stats-bar{background:white;border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;gap:2rem;align-items:center;flex-wrap:wrap}
 .stat{display:flex;flex-direction:column}
-.stat-val{font-size:1.4rem;font-weight:700;color:var(--blue);font-family:'Libre Baskerville',serif;line-height:1}
+.stat-val{font-size:1.4rem;font-weight:700;color:var(--blue); line-height:1}
 .stat-label{font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:0.2rem}
 .stats-divider{width:1px;height:36px;background:var(--border)}
 
@@ -71,7 +72,7 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
 /* Section headers */
 .section-header{display:flex;align-items:center;gap:0.75rem;margin:2rem 0 1rem;padding-bottom:0.6rem;border-bottom:2px solid var(--border)}
 .section-header:first-child{margin-top:0}
-.section-label{font-family:'Libre Baskerville',serif;font-size:1.1rem;font-weight:700;color:var(--blue)}
+.section-label{ font-size:1.1rem;font-weight:700;color:var(--blue)}
 .section-label.today{color:var(--teal)}
 .section-count{background:var(--teal-light);color:var(--teal);padding:0.2rem 0.6rem;border-radius:100px;font-size:0.7rem;font-weight:700}
 
@@ -202,6 +203,12 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
   let currentPage = 1;
 
   // ── Login ──────────────────────────────────────────────────────────────────
+  // Auto-login if password was saved
+  const savedPassword = localStorage.getItem("rdDashPassword");
+  if (savedPassword) {
+    document.getElementById("passwordInput").value = savedPassword;
+    attemptLogin();
+  }
   document.getElementById("loginBtn").addEventListener("click", attemptLogin);
   document.getElementById("passwordInput").addEventListener("keydown", e => {
     if (e.key === "Enter") attemptLogin();
@@ -215,8 +222,9 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
 
     try {
       const res = await fetch(`${API_BASE}/api/appointments?token=${API_TOKEN}&password=${encodeURIComponent(password)}`);
-      if (res.ok) {
+    if (res.ok) {
         currentPassword = password;
+        localStorage.setItem("rdDashPassword", password);
         const data = await res.json();
         allAppointments = data.appointments;
         document.getElementById("loginScreen").style.display = "none";
@@ -235,6 +243,7 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
 
   // ── Logout ─────────────────────────────────────────────────────────────────
   document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.removeItem("rdDashPassword");
     currentPassword = "";
     allAppointments = [];
     document.getElementById("passwordInput").value = "";
