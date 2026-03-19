@@ -77,8 +77,20 @@ module.exports = async function handler(req, res) {
         service: structured?.service || null,
         email:   structured?.email   || null,
         phone:   structured?.phone   || null,
-        // Manual booking field — strip extra blank lines and trim
-        notes: structured ? null : (event.description || "").replace(/\n{3,}/g, "\n\n").trim(),
+        // Manual booking field — strip HTML tags, &nbsp;, and collapse blank lines
+        notes: structured ? null : (event.description || "")
+          .replace(/<[^>]*>/g, "")        // strip any HTML tags
+          .replace(/&nbsp;/gi, " ")       // replace &nbsp; with space
+          .replace(/&amp;/gi, "&")        // decode &amp;
+          .replace(/&lt;/gi, "<")
+          .replace(/&gt;/gi, ">")
+          .replace(/\r\n/g, "\n")         // normalise line endings
+          .replace(/\r/g, "\n")
+          .replace(/[^\S\n]+/g, " ")      // collapse multiple spaces/tabs to one
+          .replace(/ \n/g, "\n")          // remove spaces before newlines
+          .replace(/\n /g, "\n")          // remove spaces after newlines
+          .replace(/\n{2,}/g, "\n")       // collapse multiple blank lines to one
+          .trim(),
         date: start.toLocaleDateString("en-GH", {
           weekday: "long", year: "numeric", month: "long", day: "numeric",
           timeZone: TIMEZONE,
