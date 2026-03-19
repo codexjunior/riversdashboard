@@ -19,17 +19,20 @@ function getAuthClient() {
 }
 
 function parseDescription(description) {
-  if (!description) return {};
+  if (!description) return null;
   const get = (key) => {
     const match = description.match(new RegExp(`${key}: (.+)`));
-    return match ? match[1].trim() : "—";
+    return match ? match[1].trim() : null;
   };
-  return {
-    patient: get("Patient"),
-    service: get("Service"),
-    email:   get("Email"),
-    phone:   get("Phone"),
-  };
+  const patient = get("Patient");
+  const service = get("Service");
+  const email   = get("Email");
+  const phone   = get("Phone");
+
+  // Only treat as structured if at least patient and service exist
+  if (!patient || !service) return null;
+
+  return { patient, service, email: email || "—", phone: phone || "—" };
 }
 
 module.exports = async function handler(req, res) {
@@ -62,20 +65,29 @@ module.exports = async function handler(req, res) {
 
     const events = (response.data.items || []).map((event) => {
       const start = new Date(event.start.dateTime || event.start.date);
-      const details = parseDescription(event.description);
+      const end = new Date(event.end.dateTime || event.end.date);
+      const structured = parseDescription(event.description);
 
       return {
         id: event.id,
-        title: event.summary || "",
-        patient: details.patient,
-        service: details.service,
-        email: details.email,
-        phone: details.phone,
+        title: event.summary || "Untitled Appointment",
+        isWebBooking: !!structured,
+        // Website booking fields
+        patient: structured?.patient || null,
+        service: structured?.service || null,
+        email:   structured?.email   || null,
+        phone:   structured?.phone   || null,
+        // Manual booking field
+        notes: structured ? null : (event.description || ""),
         date: start.toLocaleDateString("en-GH", {
           weekday: "long", year: "numeric", month: "long", day: "numeric",
           timeZone: TIMEZONE,
         }),
         time: start.toLocaleTimeString("en-GH", {
+          hour: "2-digit", minute: "2-digit", hour12: true,
+          timeZone: TIMEZONE,
+        }),
+        timeEnd: end.toLocaleTimeString("en-GH", {
           hour: "2-digit", minute: "2-digit", hour12: true,
           timeZone: TIMEZONE,
         }),
