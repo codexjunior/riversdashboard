@@ -55,7 +55,6 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
 .search-wrap{position:relative;flex:1;min-width:200px}
 .search-wrap input{width:100%;padding:0.65rem 1rem 0.65rem 2.25rem;border:1.5px solid var(--border);border-radius:10px;font-size:0.85rem;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s}
 .search-wrap input:focus{border-color:var(--teal)}
-.search-icon{position:absolute;left:0.75rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.8rem}
 .refresh-btn{padding:0.65rem 1.25rem;background:var(--teal);color:white;border:none;border-radius:10px;font-size:0.83rem;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:background 0.2s}
 .refresh-btn:hover{background:var(--blue)}
 .result-count{font-size:0.78rem;color:var(--muted)}
@@ -68,12 +67,6 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
 .state-msg .icon{font-size:2.5rem;margin-bottom:1rem}
 .state-msg p{font-size:0.92rem}
 
-/* Section headers */
-.section-header{display:flex;align-items:center;gap:0.75rem;margin:2rem 0 1rem;padding-bottom:0.6rem;border-bottom:2px solid var(--border)}
-.section-header:first-child{margin-top:0}
-.section-label{ font-size:1.1rem;font-weight:700;color:var(--blue)}
-.section-label.today{color:var(--teal)}
-.section-count{background:var(--teal-light);color:var(--teal);padding:0.2rem 0.6rem;border-radius:100px;font-size:0.7rem;font-weight:700}
 
 /* Appointment card */
 .appt-list{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:0.5rem}
@@ -175,7 +168,6 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
 
   <div class="controls">
     <div class="search-wrap">
-      <span class="search-icon">🔍</span>
       <input type="text" id="searchInput" placeholder="Search by patient name…">
     </div>
     <span class="result-count" id="resultCount"></span>
@@ -284,12 +276,6 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
     return "later";
   }
 
-  const BUCKET_LABELS = {
-    today: "📅 Today",
-    week:  "📆 This Week",
-    month: "🗓 This Month",
-    later: "⏳ Later",
-  };
 
   // ── Render ─────────────────────────────────────────────────────────────────
   function renderAll() {
@@ -329,11 +315,6 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
     ["today", "week", "month", "later"].forEach(bucketKey => {
       const appts = buckets[bucketKey];
       if (appts.length === 0) return;
-
-      html += `<div class="section-header">
-        <span class="section-label${bucketKey === "today" ? " today" : ""}">${BUCKET_LABELS[bucketKey]}</span>
-        <span class="section-count">${appts.length}</span>
-      </div>`;
 
       const byDate = {};
       appts.forEach(a => {
