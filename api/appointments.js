@@ -66,6 +66,7 @@ module.exports = async function handler(req, res) {
 
       return {
         id: event.id,
+        title: event.summary || "",
         patient: details.patient,
         service: details.service,
         email: details.email,
