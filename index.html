@@ -460,7 +460,7 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
         method: "POST",
         headers: { "Content-Type": "application/json" },
         const duration = document.getElementById("apptDuration").value.trim();
-        body: JSON.stringify({ token: API_TOKEN, password: currentPassword, name, phone, email, date, time, duration, description: desc }),,
+        body: JSON.stringify({ token: API_TOKEN, password: currentPassword, name, phone, email, date, time, duration, description: desc }),
       });
       const data = await res.json();
       if (res.ok && data.success) {
