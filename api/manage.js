@@ -26,12 +26,26 @@ function auth(body) {
          body.password === process.env.DASHBOARD_PASSWORD;
 }
 
+// ─── Parse duration string into minutes ──────────────────────────────────────
+// Accepts: "30" → 30, "45" → 45, "1:30" → 90, "2:00" → 120
+function parseDuration(str) {
+  if (!str || !str.trim()) return 60; // default 1 hour
+  const trimmed = str.trim();
+  if (trimmed.includes(":")) {
+    const [h, m] = trimmed.split(":").map(Number);
+    const mins = (h * 60) + (m || 0);
+    return mins > 0 ? mins : 60;
+  }
+  const mins = parseInt(trimmed, 10);
+  return mins > 0 ? mins : 60;
+}
+
 // ─── Create event ─────────────────────────────────────────────────────────────
 async function createEvent(calendarApi, { name, phone, email, date, time, description }) {
   // date = "YYYY-MM-DD", time = "HH:MM" (24hr)
   const startIso = `${date}T${time}:00Z`;
   const startDt  = new Date(startIso);
-  const endDt    = new Date(startDt.getTime() + 60 * 60 * 1000); // default 1hr
+  const endDt    = new Date(startDt.getTime() + parseDuration(duration) * 60 * 1000);; // default 1hr
 
   const structuredLines = [
     `Patient: ${name}`,
