@@ -477,54 +477,94 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
     btn.disabled = false; btn.textContent = "Create Appointment";
   });
 
-  // ── Edit notes inline ─────────────────────────────────────────────────────
-  async function saveNotes(eventId, newNotes, cardEl) {
-    const saveBtn = cardEl.querySelector(".save-btn");
-    saveBtn.textContent = "Saving…"; saveBtn.disabled = true;
-    try {
-      const res = await fetch(`${API_BASE}/api/manage`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: API_TOKEN, password: currentPassword, eventId, description: newNotes }),
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        // Update local data
-        const appt = allAppointments.find(a => a.id === eventId);
-        if (appt) appt.notes = newNotes;
-        cancelEdit(cardEl, newNotes);
-        showToast("✅ Notes updated");
-      } else {
-        showToast("Failed to save notes", true);
+  // ── HTML escape helper ────────────────────────────────────────────────────
+  function escHtml(str) {
+    if (!str) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+  function escAttr(str) {
+    if (!str) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;")
+      .replace(/\n/g, "&#10;")
+      .replace(/\r/g, "");
+  }
+
+  // ── Edit notes — event delegation (no onclick with raw strings) ────────────
+  document.getElementById("apptContent").addEventListener("click", async function(e) {
+    const card = e.target.closest(".appt-card");
+    if (!card) return;
+    const eventId = card.dataset.id;
+    const appt    = allAppointments.find(a => a.id === eventId);
+
+    // Edit button clicked
+    if (e.target.closest(".edit-btn")) {
+      const notesEl  = card.querySelector(".notes-display");
+      const editArea = card.querySelector(".edit-area");
+      const textarea = card.querySelector(".edit-textarea");
+      notesEl.style.display  = "none";
+      editArea.style.display = "block";
+      textarea.value = appt?.notes || "";
+      textarea.focus();
+      return;
+    }
+
+    // Cancel button clicked
+    if (e.target.closest(".cancel-edit-btn")) {
+      const notesEl  = card.querySelector(".notes-display");
+      const editArea = card.querySelector(".edit-area");
+      notesEl.style.display  = "block";
+      editArea.style.display = "none";
+      // Restore original notes display
+      const notes = appt?.notes || "";
+      notesEl.innerHTML = notes.trim()
+        ? `<div class="appt-notes">${escHtml(notes)}</div>`
+        : `<div class="appt-no-notes">No notes</div>`;
+      return;
+    }
+
+    // Save button clicked
+    if (e.target.closest(".save-btn")) {
+      const saveBtn = card.querySelector(".save-btn");
+      const newNotes = card.querySelector(".edit-textarea").value.trim();
+      saveBtn.textContent = "Saving…"; saveBtn.disabled = true;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/manage`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: API_TOKEN, password: currentPassword, eventId, description: newNotes }),
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          // Persist in local state
+          if (appt) appt.notes = newNotes;
+          // Update card display
+          const notesEl  = card.querySelector(".notes-display");
+          const editArea = card.querySelector(".edit-area");
+          editArea.style.display = "none";
+          notesEl.style.display  = "block";
+          notesEl.innerHTML = newNotes
+            ? `<div class="appt-notes">${escHtml(newNotes)}</div>`
+            : `<div class="appt-no-notes">No notes</div>`;
+          showToast("✅ Notes updated");
+        } else {
+          showToast("Failed to save notes", true);
+          saveBtn.textContent = "Save"; saveBtn.disabled = false;
+        }
+      } catch {
+        showToast("Network error", true);
         saveBtn.textContent = "Save"; saveBtn.disabled = false;
       }
-    } catch {
-      showToast("Network error", true);
-      saveBtn.textContent = "Save"; saveBtn.disabled = false;
     }
-  }
-
-  function startEdit(eventId, currentNotes, cardEl) {
-    const notesEl = cardEl.querySelector(".notes-display");
-    const editArea = cardEl.querySelector(".edit-area");
-    const textarea = cardEl.querySelector(".edit-textarea");
-    notesEl.style.display = "none";
-    editArea.style.display = "block";
-    textarea.value = currentNotes || "";
-    textarea.focus();
-  }
-
-  function cancelEdit(cardEl, originalNotes) {
-    const notesEl = cardEl.querySelector(".notes-display");
-    const editArea = cardEl.querySelector(".edit-area");
-    if (notesEl) {
-      notesEl.style.display = "block";
-      notesEl.innerHTML = originalNotes
-        ? `<div class="appt-notes">${originalNotes}</div>`
-        : `<div class="appt-no-notes">No notes</div>`;
-    }
-    if (editArea) editArea.style.display = "none";
-  }
+  });
 
   // ── Toast ─────────────────────────────────────────────────────────────────
   function showToast(msg, isError = false) {
@@ -607,21 +647,24 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
           ? `<span class="source-badge web">🌐 Website</span>`
           : `<span class="source-badge manual">📝 Manual</span>`;
 
-        const notesHtml = a.notes
-          ? `<div class="appt-notes">${a.notes}</div>`
+        const notesHtml = (a.notes || "").trim()
+          ? `<div class="appt-notes">${escHtml(a.notes)}</div>`
           : `<div class="appt-no-notes">No notes</div>`;
 
-        const structuredDetails = a.isWebBooking ? `
+        // Show structured grid for both website bookings AND dashboard-created ones
+        const hasDetails = a.patient || a.phone || a.email || a.service;
+        const structuredDetails = hasDetails ? `
           <div class="appt-details">
-            <div class="appt-detail"><span class="detail-label">Patient</span><span class="detail-value">${a.patient}</span></div>
-            <div class="appt-detail"><span class="detail-label">Phone</span><span class="detail-value"><a href="tel:${(a.phone||'').replace(/\s/g,'')}">${a.phone}</a></span></div>
-            <div class="appt-detail"><span class="detail-label">Email</span><span class="detail-value"><a href="mailto:${a.email}">${a.email}</a></span></div>
-            <div class="appt-detail"><span class="detail-label">Service</span><span class="detail-value service-badge">${a.service}</span></div>
+            ${a.patient ? `<div class="appt-detail"><span class="detail-label">Patient</span><span class="detail-value">${escHtml(a.patient)}</span></div>` : ""}
+            ${a.phone   ? `<div class="appt-detail"><span class="detail-label">Phone</span><span class="detail-value"><a href="tel:${(a.phone).replace(/\s/g,'')}">${escHtml(a.phone)}</a></span></div>` : ""}
+            ${a.email   ? `<div class="appt-detail"><span class="detail-label">Email</span><span class="detail-value"><a href="mailto:${escHtml(a.email)}">${escHtml(a.email)}</a></span></div>` : ""}
+            ${a.service ? `<div class="appt-detail"><span class="detail-label">Service</span><span class="detail-value service-badge">${escHtml(a.service)}</span></div>` : ""}
           </div>` : "";
 
-        html += `<div class="appt-card${isToday ? " today-card" : ""}" id="card-${a.id}">
+        // Use data-id — NO onclick with raw strings
+        html += `<div class="appt-card${isToday ? " today-card" : ""}" id="card-${a.id}" data-id="${a.id}" data-notes="${escAttr(a.notes||'')}">
           <div class="appt-top">
-            <div><div class="appt-title">${a.title}</div>${source}</div>
+            <div><div class="appt-title">${escHtml(a.title)}</div>${source}</div>
             <span class="appt-time${isToday ? " today-time" : ""}">🕐 ${timeRange}</span>
           </div>
           ${structuredDetails}
@@ -629,12 +672,12 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
           <div class="edit-area" style="display:none">
             <textarea class="edit-textarea" placeholder="Add notes…"></textarea>
             <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
-              <button class="save-btn" onclick="saveNotes('${a.id}', this.closest('.appt-card').querySelector('.edit-textarea').value, this.closest('.appt-card'))">Save</button>
-              <button class="cancel-edit-btn" onclick="cancelEdit(this.closest('.appt-card'), '${(a.notes||'').replace(/'/g, "\\'")}')">Cancel</button>
+              <button class="save-btn">Save</button>
+              <button class="cancel-edit-btn">Cancel</button>
             </div>
           </div>
           <div class="appt-card-actions">
-            <button class="edit-btn" onclick="startEdit('${a.id}', '${(a.notes||'').replace(/'/g, "\\'")}', this.closest('.appt-card'))">✏️ Edit Notes</button>
+            <button class="edit-btn">✏️ Edit Notes</button>
           </div>
         </div>`;
       });
