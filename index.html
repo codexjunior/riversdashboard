@@ -4,21 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Staff Dashboard — Rivers Dental Clinic</title>
-<!-- Home screen icon -->
 <link rel="apple-touch-icon" href="https://afridoctor.com/cdn/storage/userFiles/BStstTNLapGT8haog/original/BStstTNLapGT8haog.png">
 <link rel="icon" type="image/png" href="https://afridoctor.com/cdn/storage/userFiles/BStstTNLapGT8haog/original/BStstTNLapGT8haog.png">
 <link rel="manifest" href="/manifest.json">
-<!-- PWA meta tags -->
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="RDC Staff">
-<meta name="application-name" content="RDC Staff">
-<meta name="theme-color" content="#0A3A63"><link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0A3A63">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
   --blue:#0A3A63;--teal:#00A9A5;--teal-light:#E6F7F7;
   --white:#fff;--light:#F2F6F9;--border:#D8E8F0;
-  --text:#1A2B3C;--muted:#6B7A8D;--red:#b91c1c}
+  --text:#1A2B3C;--muted:#6B7A8D;--red:#b91c1c;--green:#0d6b4a}
 body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);min-height:100vh}
 
 /* ── LOGIN ── */
@@ -26,9 +25,9 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
 .login-card{background:white;border-radius:24px;padding:3rem 2.5rem;max-width:420px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,0.25)}
 .login-logo{display:flex;align-items:center;gap:0.75rem;margin-bottom:2rem}
 .login-logo img{width:48px;height:48px;object-fit:contain;border-radius:50%}
-.login-logo-name{ font-size:1rem;font-weight:700;color:var(--blue)}
+.login-logo-name{font-size:1rem;font-weight:700;color:var(--blue)}
 .login-logo-sub{font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);font-weight:500;display:block}
-.login-card h1{ font-size:1.5rem;color:var(--blue);margin-bottom:0.5rem}
+.login-card h1{font-size:1.5rem;color:var(--blue);margin-bottom:0.5rem;font-family:'Libre Baskerville',serif}
 .login-card p{font-size:0.85rem;color:var(--muted);margin-bottom:2rem}
 .login-field{display:flex;flex-direction:column;gap:0.4rem;margin-bottom:1.25rem}
 .login-field label{font-size:0.7rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)}
@@ -38,62 +37,91 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
 .login-btn:hover{background:var(--blue)}
 .login-error{background:#fff2f2;border:1px solid #f5a0a0;color:var(--red);padding:0.75rem 1rem;border-radius:10px;font-size:0.83rem;margin-bottom:1rem;display:none}
 
-/* ── DASHBOARD ── */
-.dashboard{display:none}
+/* ── APP SHELL ── */
+.app{display:none;min-height:100vh;flex-direction:column}
 
-.dash-header{background:var(--blue);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.dash-brand{display:flex;align-items:center;gap:0.75rem}
-.dash-brand img{width:36px;height:36px;object-fit:contain;border-radius:50%}
-.dash-brand-name{ font-size:0.95rem;font-weight:700;color:white}
-.dash-brand-sub{font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.55);display:block}
-.dash-right{display:flex;align-items:center;gap:1rem}
+/* ── NAV ── */
+.nav{background:var(--blue);padding:0 1.5rem;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.nav-brand{display:flex;align-items:center;gap:0.65rem;text-decoration:none}
+.nav-brand img{width:32px;height:32px;object-fit:contain;border-radius:50%}
+.nav-brand-text{font-family:'Libre Baskerville',serif;font-size:0.9rem;font-weight:700;color:white}
+.nav-brand-sub{font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.5);display:block}
+
+/* Desktop nav links */
+.nav-links{display:flex;align-items:center;gap:0.25rem}
+.nav-link{color:rgba(255,255,255,0.65);text-decoration:none;font-size:0.82rem;font-weight:500;padding:0.45rem 0.9rem;border-radius:8px;transition:all 0.2s;border:none;background:none;cursor:pointer;font-family:'Inter',sans-serif}
+.nav-link:hover{color:white;background:rgba(255,255,255,0.1)}
+.nav-link.active{color:white;background:rgba(255,255,255,0.15);font-weight:600}
+.nav-divider{width:1px;height:20px;background:rgba(255,255,255,0.15);margin:0 0.5rem}
 .logout-btn{font-size:0.75rem;color:rgba(255,255,255,0.6);background:none;border:1px solid rgba(255,255,255,0.2);padding:0.3rem 0.75rem;border-radius:100px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
 .logout-btn:hover{color:white;border-color:rgba(255,255,255,0.5)}
 
-/* Stats */
+/* Hamburger */
+.hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:4px;background:none;border:none}
+.hamburger span{width:22px;height:2px;background:white;border-radius:2px;transition:all 0.3s}
+
+/* Mobile drawer */
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;opacity:0;transition:opacity 0.25s}
+.drawer-overlay.open{opacity:1}
+.drawer{position:fixed;top:0;right:-280px;width:280px;height:100vh;background:var(--blue);z-index:301;transition:right 0.3s ease;padding:0;display:flex;flex-direction:column}
+.drawer.open{right:0}
+.drawer-header{padding:1.25rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:space-between}
+.drawer-close{background:none;border:none;color:rgba(255,255,255,0.6);font-size:1.3rem;cursor:pointer;padding:0.25rem}
+.drawer-nav{padding:1rem 0.75rem;display:flex;flex-direction:column;gap:0.25rem;flex:1}
+.drawer-link{color:rgba(255,255,255,0.7);text-decoration:none;font-size:0.9rem;font-weight:500;padding:0.75rem 1rem;border-radius:10px;transition:all 0.2s;border:none;background:none;cursor:pointer;font-family:'Inter',sans-serif;text-align:left;width:100%}
+.drawer-link:hover,.drawer-link.active{color:white;background:rgba(255,255,255,0.12)}
+.drawer-link.active{font-weight:600}
+.drawer-footer{padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,0.1)}
+.drawer-logout{width:100%;padding:0.75rem;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.15);border-radius:10px;font-size:0.85rem;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
+.drawer-logout:hover{background:rgba(255,255,255,0.15);color:white}
+
+/* ── PAGES ── */
+.page{display:none;flex:1}
+.page.active{display:block}
+
+/* ── STATS ── */
 .stats-bar{background:white;border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;gap:2rem;align-items:center;flex-wrap:wrap}
 .stat{display:flex;flex-direction:column}
-.stat-val{font-size:1.4rem;font-weight:700;color:var(--blue); line-height:1}
+.stat-val{font-size:1.4rem;font-weight:700;color:var(--blue);font-family:'Libre Baskerville',serif;line-height:1}
 .stat-label{font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:0.2rem}
 .stats-divider{width:1px;height:36px;background:var(--border)}
 
-/* Controls */
+/* ── CONTROLS ── */
 .controls{padding:1rem 2rem;display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;background:white;border-bottom:1px solid var(--border)}
-.search-wrap{position:relative;flex:1;min-width:200px}
+.search-wrap{position:relative;flex:1;min-width:180px}
 .search-wrap input{width:100%;padding:0.65rem 1rem 0.65rem 2.25rem;border:1.5px solid var(--border);border-radius:10px;font-size:0.85rem;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s}
 .search-wrap input:focus{border-color:var(--teal)}
-.refresh-btn{padding:0.65rem 1.25rem;background:var(--teal);color:white;border:none;border-radius:10px;font-size:0.83rem;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:background 0.2s}
-.refresh-btn:hover{background:var(--blue)}
+.search-icon{position:absolute;left:0.75rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.8rem;pointer-events:none}
+.btn-primary{padding:0.65rem 1.25rem;background:var(--teal);color:white;border:none;border-radius:10px;font-size:0.83rem;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;gap:0.4rem;white-space:nowrap}
+.btn-primary:hover{background:var(--blue)}
+.btn-ghost{padding:0.65rem 1.25rem;background:white;color:var(--text);border:1.5px solid var(--border);border-radius:10px;font-size:0.83rem;font-weight:500;font-family:'Inter',sans-serif;cursor:pointer;transition:all 0.2s}
+.btn-ghost:hover{border-color:var(--teal);color:var(--teal)}
 .result-count{font-size:0.78rem;color:var(--muted)}
 
-/* Content */
-.dash-content{padding:2rem;max-width:900px;margin:0 auto}
-
-/* State messages */
+/* ── CONTENT ── */
+.page-content{padding:2rem;max-width:900px;margin:0 auto}
 .state-msg{text-align:center;padding:4rem 2rem;color:var(--muted)}
 .state-msg .icon{font-size:2.5rem;margin-bottom:1rem}
-.state-msg p{font-size:0.92rem}
 
+/* ── DATE GROUP ── */
+.date-group-header{font-size:0.78rem;font-weight:700;color:var(--blue);margin:1.5rem 0 0.5rem;display:flex;align-items:center;gap:0.6rem}
+.date-group-header:first-child{margin-top:0}
+.day-count{background:var(--teal-light);color:var(--teal);padding:0.15rem 0.55rem;border-radius:100px;font-size:0.68rem;font-weight:700}
 
-/* Appointment card */
+/* ── APPT CARD ── */
 .appt-list{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:0.5rem}
-.appt-card{background:white;border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;transition:box-shadow 0.2s,border-color 0.2s;cursor:default}
+.appt-card{background:white;border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;transition:box-shadow 0.2s,border-color 0.2s}
 .appt-card:hover{box-shadow:0 4px 20px rgba(10,58,99,0.08);border-color:#b0cfe0}
 .appt-card.today-card{border-left:3px solid var(--teal)}
-
 .appt-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:0.5rem}
 .appt-title{font-size:1rem;font-weight:700;color:var(--blue);line-height:1.3}
 .appt-time{display:inline-flex;align-items:center;gap:0.3rem;background:var(--blue);color:white;padding:0.3rem 0.8rem;border-radius:100px;font-size:0.75rem;font-weight:600;white-space:nowrap;flex-shrink:0}
 .appt-time.today-time{background:var(--teal)}
-.appt-notes{font-size:0.82rem;color:var(--muted);line-height:1.65;margin-top:0.4rem;padding-top:0.6rem;border-top:1px solid var(--border);white-space:pre-wrap}
+.appt-notes{font-size:0.82rem;color:var(--muted);line-height:1.65;margin-top:0.5rem;padding-top:0.6rem;border-top:1px solid var(--border);white-space:pre-wrap}
 .appt-no-notes{font-size:0.78rem;color:#b0bec8;font-style:italic;margin-top:0.4rem}
-
-/* Source badge */
 .source-badge{display:inline-block;font-size:0.65rem;font-weight:600;padding:0.15rem 0.5rem;border-radius:100px;margin-top:0.25rem}
 .source-badge.web{background:#e6f7f7;color:var(--teal)}
 .source-badge.manual{background:#f2f6f9;color:var(--muted)}
-
-/* Structured details (website bookings) */
 .appt-details{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.75rem;margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border)}
 .appt-detail{display:flex;flex-direction:column;gap:0.2rem}
 .detail-label{font-size:0.62rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
@@ -102,24 +130,66 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
 .detail-value a:hover{text-decoration:underline}
 .detail-value.service-badge{display:inline-block;background:var(--teal-light);color:var(--teal);padding:0.2rem 0.6rem;border-radius:100px;font-size:0.75rem;font-weight:600}
 
-@media(max-width:600px){
-  .dash-content{padding:1rem}
-  .appt-top{flex-direction:column;gap:0.5rem}
-  .stats-bar{gap:1rem}
-}
+/* Edit notes inline */
+.appt-card-actions{display:flex;align-items:center;justify-content:flex-end;gap:0.5rem;margin-top:0.75rem;padding-top:0.6rem;border-top:1px solid var(--border)}
+.edit-btn{font-size:0.75rem;color:var(--muted);background:none;border:1px solid var(--border);padding:0.3rem 0.75rem;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
+.edit-btn:hover{color:var(--teal);border-color:var(--teal)}
+.edit-textarea{width:100%;min-height:80px;padding:0.65rem 0.8rem;border:1.5px solid var(--teal);border-radius:10px;font-size:0.83rem;font-family:'Inter',sans-serif;color:var(--text);resize:vertical;outline:none;margin-top:0.5rem}
+.save-btn{font-size:0.75rem;color:white;background:var(--teal);border:none;padding:0.35rem 0.9rem;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.2s}
+.save-btn:hover{background:var(--blue)}
+.cancel-edit-btn{font-size:0.75rem;color:var(--muted);background:none;border:1px solid var(--border);padding:0.35rem 0.75rem;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif}
 
-/* Pagination */
+/* ── PAGINATION ── */
 .pagination{display:flex;align-items:center;justify-content:center;gap:0.4rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
 .page-btn{padding:0.5rem 0.9rem;border:1.5px solid var(--border);border-radius:8px;background:white;color:var(--text);font-size:0.82rem;font-family:'Inter',sans-serif;cursor:pointer;transition:all 0.2s;font-weight:500}
 .page-btn:hover:not(:disabled){border-color:var(--teal);color:var(--teal)}
 .page-btn.active{background:var(--blue);border-color:var(--blue);color:white;font-weight:700}
 .page-btn:disabled{opacity:0.35;cursor:not-allowed}
 .page-ellipsis{color:var(--muted);font-size:0.82rem;padding:0 0.2rem}
+
+/* ── PATIENTS PAGE ── */
+.blank-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:3rem}
+.blank-page h2{font-family:'Libre Baskerville',serif;font-size:1.5rem;color:var(--blue);margin-bottom:0.75rem}
+.blank-page p{font-size:0.9rem;color:var(--muted);max-width:360px;line-height:1.7}
+
+/* ── NEW APPOINTMENT MODAL ── */
+.modal-overlay{position:fixed;inset:0;z-index:400;background:rgba(10,30,50,0.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;visibility:hidden;transition:opacity 0.25s,visibility 0.25s}
+.modal-overlay.open{opacity:1;visibility:visible}
+.modal-panel{background:white;border-radius:20px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:2rem;box-shadow:0 24px 80px rgba(0,0,0,0.25);transform:translateY(12px) scale(0.98);transition:transform 0.25s cubic-bezier(0.34,1.2,0.64,1)}
+.modal-overlay.open .modal-panel{transform:translateY(0) scale(1)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.modal-header h2{font-family:'Libre Baskerville',serif;font-size:1.25rem;color:var(--blue)}
+.modal-close{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border);background:var(--light);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:1rem;transition:all 0.2s}
+.modal-close:hover{background:var(--blue);border-color:var(--blue);color:white}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-field{display:flex;flex-direction:column;gap:0.35rem;margin-bottom:1rem}
+.form-field label{font-size:0.68rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)}
+.form-field input,.form-field textarea,.form-field select{padding:0.7rem 0.9rem;border:1.5px solid var(--border);border-radius:10px;font-size:0.88rem;font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:border-color 0.2s;background:var(--light)}
+.form-field input:focus,.form-field textarea:focus,.form-field select:focus{border-color:var(--teal);background:white;box-shadow:0 0 0 3px rgba(0,169,165,0.1)}
+.form-field textarea{min-height:90px;resize:vertical}
+.form-error{background:#fff2f2;border:1px solid #f5a0a0;color:var(--red);padding:0.65rem 0.9rem;border-radius:8px;font-size:0.82rem;margin-bottom:1rem;display:none}
+.modal-submit{width:100%;padding:0.9rem;background:var(--teal);color:white;border:none;border-radius:100px;font-size:0.9rem;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:background 0.2s}
+.modal-submit:hover{background:var(--blue)}
+.modal-submit:disabled{opacity:0.55;cursor:not-allowed}
+
+/* Toast */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:white;padding:0.85rem 1.75rem;border-radius:100px;font-size:0.86rem;font-weight:600;box-shadow:0 8px 32px rgba(0,0,0,0.2);z-index:600;opacity:0;transition:opacity 0.3s,transform 0.3s;white-space:nowrap;max-width:90vw;text-align:center;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{background:var(--red)}
+
+@media(max-width:860px){
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .stats-bar{gap:1rem}
+  .controls{padding:1rem}
+  .page-content{padding:1rem}
+  .form-row{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- ── LOGIN ── -->
 <div class="login-screen" id="loginScreen">
   <div class="login-card">
     <div class="login-logo">
@@ -130,7 +200,7 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
       </div>
     </div>
     <h1>Staff Dashboard</h1>
-    <p>Enter the dashboard password to view appointments.</p>
+    <p>Enter your password to access the staff portal.</p>
     <div class="login-error" id="loginError">Incorrect password. Please try again.</div>
     <div class="login-field">
       <label>Password</label>
@@ -140,92 +210,156 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
   </div>
 </div>
 
-<!-- DASHBOARD -->
-<div class="dashboard" id="dashboard">
+<!-- ── APP ── -->
+<div class="app" id="app">
 
-  <div class="dash-header">
-    <div class="dash-brand">
-      <img src="https://afridoctor.com/cdn/storage/userFiles/BStstTNLapGT8haog/original/BStstTNLapGT8haog.png" alt="Rivers Dental">
+  <!-- NAV -->
+  <nav class="nav">
+    <a class="nav-brand" href="#">
+      <img src="https://afridoctor.com/cdn/storage/userFiles/BStstTNLapGT8haog/original/BStstTNLapGT8haog.png" alt="RDC">
       <div>
-        <div class="dash-brand-name">Rivers Dental Clinic</div>
-        <span class="dash-brand-sub">Staff Dashboard</span>
+        <div class="nav-brand-text">Rivers Dental</div>
+        <span class="nav-brand-sub">Staff Portal</span>
       </div>
-    </div>
-    <div class="dash-right">
+    </a>
+    <div class="nav-links">
+      <button class="nav-link active" data-page="appointments">📅 Appointments</button>
+      <button class="nav-link" data-page="patients">👤 Patients</button>
+      <div class="nav-divider"></div>
       <button class="logout-btn" id="logoutBtn">Sign Out</button>
     </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE DRAWER -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <div>
+        <div style="font-family:'Libre Baskerville',serif;font-size:0.95rem;font-weight:700;color:white">Rivers Dental</div>
+        <div style="font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.5)">Staff Portal</div>
+      </div>
+      <button class="drawer-close" id="drawerClose">✕</button>
+    </div>
+    <div class="drawer-nav">
+      <button class="drawer-link active" data-page="appointments">📅 Appointments</button>
+      <button class="drawer-link" data-page="patients">👤 Patients</button>
+    </div>
+    <div class="drawer-footer">
+      <button class="drawer-logout" id="drawerLogout">Sign Out</button>
+    </div>
   </div>
 
-  <div class="stats-bar">
-    <div class="stat">
-      <span class="stat-val" id="statTotal">—</span>
-      <span class="stat-label">Upcoming</span>
+  <!-- ── APPOINTMENTS PAGE ── -->
+  <div class="page active" id="page-appointments">
+    <div class="stats-bar">
+      <div class="stat"><span class="stat-val" id="statTotal">—</span><span class="stat-label">Upcoming</span></div>
+      <div class="stats-divider"></div>
+      <div class="stat"><span class="stat-val" id="statToday">—</span><span class="stat-label">Today</span></div>
+      <div class="stats-divider"></div>
+      <div class="stat"><span class="stat-val" id="statWeek">—</span><span class="stat-label">This Week</span></div>
     </div>
-    <div class="stats-divider"></div>
-    <div class="stat">
-      <span class="stat-val" id="statToday">—</span>
-      <span class="stat-label">Today</span>
+    <div class="controls">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search by patient name…">
+      </div>
+      <span class="result-count" id="resultCount"></span>
+      <button class="btn-ghost" id="refreshBtn">↻ Refresh</button>
+      <button class="btn-primary" id="newApptBtn">+ New Appointment</button>
     </div>
-    <div class="stats-divider"></div>
-    <div class="stat">
-      <span class="stat-val" id="statWeek">—</span>
-      <span class="stat-label">This Week</span>
+    <div class="page-content" id="apptContent">
+      <div class="state-msg"><div class="icon">📅</div><p>Loading appointments…</p></div>
     </div>
   </div>
 
-  <div class="controls">
-    <div class="search-wrap">
-      <input type="text" id="searchInput" placeholder="Search by patient name…">
-    </div>
-    <span class="result-count" id="resultCount"></span>
-    <button class="refresh-btn" id="refreshBtn">↻ Refresh</button>
-  </div>
-
-  <div class="dash-content" id="dashContent">
-    <div class="state-msg">
-      <div class="icon">📅</div>
-      <p>Loading appointments…</p>
+  <!-- ── PATIENTS PAGE ── -->
+  <div class="page" id="page-patients">
+    <div class="blank-page">
+      <div style="font-size:3rem;margin-bottom:1rem">👤</div>
+      <h2>Patient Records</h2>
+      <p>This section is coming soon. Patient information and history will be available here.</p>
     </div>
   </div>
 
 </div>
 
+<!-- ── NEW APPOINTMENT MODAL ── -->
+<div class="modal-overlay" id="newApptModal">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <h2>New Appointment</h2>
+      <button class="modal-close" id="closeNewAppt">✕</button>
+    </div>
+    <div class="form-error" id="apptFormError"></div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Patient Name *</label>
+        <input type="text" id="apptName" placeholder="e.g. Kofi Mensah">
+      </div>
+      <div class="form-field">
+        <label>Phone Number *</label>
+        <input type="tel" id="apptPhone" placeholder="e.g. 0244 123 456">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Email Address</label>
+      <input type="email" id="apptEmail" placeholder="kofi@example.com">
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Date *</label>
+        <input type="date" id="apptDate">
+      </div>
+      <div class="form-field">
+        <label>Time *</label>
+        <input type="time" id="apptTime">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Notes / Description</label>
+      <textarea id="apptDescription" placeholder="Procedure details, patient history, special instructions…"></textarea>
+    </div>
+    <button class="modal-submit" id="submitNewAppt">Create Appointment</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
 <script>
-  const API_TOKEN = "rivers-dental-staff-rct";
-  const API_BASE  = "";
-  const PAGE_SIZE = 10;
+  const API_TOKEN  = "rivers-dental-staff-rct";
+  const API_BASE   = "";
+  const PAGE_SIZE  = 10;
 
   let allAppointments = [];
   let currentPassword = "";
-  let currentPage = 1;
+  let currentPage     = 1;
 
   // ── Login ──────────────────────────────────────────────────────────────────
-  // Auto-login if password was saved
-  const savedPassword = localStorage.getItem("rdDashPassword");
-  if (savedPassword) {
-    document.getElementById("passwordInput").value = savedPassword;
-    attemptLogin();
-  }
+  const savedPw = localStorage.getItem("rdDashPassword");
+  if (savedPw) { document.getElementById("passwordInput").value = savedPw; attemptLogin(); }
+
   document.getElementById("loginBtn").addEventListener("click", attemptLogin);
-  document.getElementById("passwordInput").addEventListener("keydown", e => {
-    if (e.key === "Enter") attemptLogin();
-  });
+  document.getElementById("passwordInput").addEventListener("keydown", e => { if (e.key === "Enter") attemptLogin(); });
 
   async function attemptLogin() {
     const password = document.getElementById("passwordInput").value.trim();
     if (!password) return;
     document.getElementById("loginBtn").textContent = "Checking…";
     document.getElementById("loginError").style.display = "none";
-
     try {
       const res = await fetch(`${API_BASE}/api/appointments?token=${API_TOKEN}&password=${encodeURIComponent(password)}`);
-    if (res.ok) {
+      if (res.ok) {
         currentPassword = password;
         localStorage.setItem("rdDashPassword", password);
         const data = await res.json();
         allAppointments = data.appointments;
         document.getElementById("loginScreen").style.display = "none";
-        document.getElementById("dashboard").style.display = "block";
+        document.getElementById("app").style.display = "flex";
+        document.getElementById("app").style.flexDirection = "column";
         renderAll();
       } else {
         document.getElementById("loginError").style.display = "block";
@@ -239,14 +373,34 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
   }
 
   // ── Logout ─────────────────────────────────────────────────────────────────
-  document.getElementById("logoutBtn").addEventListener("click", () => {
+  function doLogout() {
     localStorage.removeItem("rdDashPassword");
-    currentPassword = "";
-    allAppointments = [];
+    currentPassword = ""; allAppointments = [];
     document.getElementById("passwordInput").value = "";
-    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("app").style.display = "none";
     document.getElementById("loginScreen").style.display = "flex";
+  }
+  document.getElementById("logoutBtn").addEventListener("click", doLogout);
+  document.getElementById("drawerLogout").addEventListener("click", doLogout);
+
+  // ── Page navigation ────────────────────────────────────────────────────────
+  function showPage(pageId) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll(".nav-link, .drawer-link").forEach(b => b.classList.remove("active"));
+    document.getElementById("page-" + pageId)?.classList.add("active");
+    document.querySelectorAll(`[data-page="${pageId}"]`).forEach(b => b.classList.add("active"));
+    closeDrawer();
+  }
+  document.querySelectorAll("[data-page]").forEach(btn => {
+    btn.addEventListener("click", () => showPage(btn.dataset.page));
   });
+
+  // ── Mobile drawer ──────────────────────────────────────────────────────────
+  function openDrawer()  { document.getElementById("drawer").classList.add("open"); document.getElementById("drawerOverlay").style.display = "block"; requestAnimationFrame(() => document.getElementById("drawerOverlay").classList.add("open")); }
+  function closeDrawer() { document.getElementById("drawer").classList.remove("open"); document.getElementById("drawerOverlay").classList.remove("open"); setTimeout(() => document.getElementById("drawerOverlay").style.display = "none", 250); }
+  document.getElementById("hamburger").addEventListener("click", openDrawer);
+  document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+  document.getElementById("drawerOverlay").addEventListener("click", closeDrawer);
 
   // ── Refresh ────────────────────────────────────────────────────────────────
   document.getElementById("refreshBtn").addEventListener("click", async () => {
@@ -263,155 +417,254 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
   // ── Search ─────────────────────────────────────────────────────────────────
   document.getElementById("searchInput").addEventListener("input", () => { currentPage = 1; renderAll(); });
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
-  function getAccraToday() {
-    return new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Accra" });
+  // ── New appointment modal ─────────────────────────────────────────────────
+  const newApptModal = document.getElementById("newApptModal");
+  document.getElementById("newApptBtn").addEventListener("click", () => {
+    document.getElementById("apptFormError").style.display = "none";
+    document.getElementById("apptName").value = "";
+    document.getElementById("apptPhone").value = "";
+    document.getElementById("apptEmail").value = "";
+    document.getElementById("apptDate").value = "";
+    document.getElementById("apptTime").value = "";
+    document.getElementById("apptDescription").value = "";
+    newApptModal.classList.add("open");
+  });
+  document.getElementById("closeNewAppt").addEventListener("click", () => newApptModal.classList.remove("open"));
+  newApptModal.addEventListener("click", e => { if (e.target === newApptModal) newApptModal.classList.remove("open"); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") newApptModal.classList.remove("open"); });
+
+  document.getElementById("submitNewAppt").addEventListener("click", async () => {
+    const name  = document.getElementById("apptName").value.trim();
+    const phone = document.getElementById("apptPhone").value.trim();
+    const email = document.getElementById("apptEmail").value.trim();
+    const date  = document.getElementById("apptDate").value;
+    const time  = document.getElementById("apptTime").value;
+    const desc  = document.getElementById("apptDescription").value.trim();
+    const errEl = document.getElementById("apptFormError");
+
+    if (!name)  { errEl.textContent = "Patient name is required."; errEl.style.display = "block"; return; }
+    if (!phone) { errEl.textContent = "Phone number is required."; errEl.style.display = "block"; return; }
+    if (!date)  { errEl.textContent = "Please select a date."; errEl.style.display = "block"; return; }
+    if (!time)  { errEl.textContent = "Please select a time."; errEl.style.display = "block"; return; }
+    errEl.style.display = "none";
+
+    const btn = document.getElementById("submitNewAppt");
+    btn.disabled = true; btn.textContent = "Creating…";
+
+    try {
+      const res = await fetch(`${API_BASE}/api/manage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: API_TOKEN, password: currentPassword, name, phone, email, date, time, description: desc }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        newApptModal.classList.remove("open");
+        showToast("✅ Appointment created successfully");
+        // Refresh list
+        const r2 = await fetch(`${API_BASE}/api/appointments?token=${API_TOKEN}&password=${encodeURIComponent(currentPassword)}`);
+        const d2 = await r2.json();
+        allAppointments = d2.appointments;
+        renderAll();
+      } else {
+        errEl.textContent = data.error || "Failed to create appointment.";
+        errEl.style.display = "block";
+      }
+    } catch {
+      errEl.textContent = "Network error. Please try again.";
+      errEl.style.display = "block";
+    }
+    btn.disabled = false; btn.textContent = "Create Appointment";
+  });
+
+  // ── Edit notes inline ─────────────────────────────────────────────────────
+  async function saveNotes(eventId, newNotes, cardEl) {
+    const saveBtn = cardEl.querySelector(".save-btn");
+    saveBtn.textContent = "Saving…"; saveBtn.disabled = true;
+    try {
+      const res = await fetch(`${API_BASE}/api/manage`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: API_TOKEN, password: currentPassword, eventId, description: newNotes }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        // Update local data
+        const appt = allAppointments.find(a => a.id === eventId);
+        if (appt) appt.notes = newNotes;
+        cancelEdit(cardEl, newNotes);
+        showToast("✅ Notes updated");
+      } else {
+        showToast("Failed to save notes", true);
+        saveBtn.textContent = "Save"; saveBtn.disabled = false;
+      }
+    } catch {
+      showToast("Network error", true);
+      saveBtn.textContent = "Save"; saveBtn.disabled = false;
+    }
   }
+
+  function startEdit(eventId, currentNotes, cardEl) {
+    const notesEl = cardEl.querySelector(".notes-display");
+    const editArea = cardEl.querySelector(".edit-area");
+    const textarea = cardEl.querySelector(".edit-textarea");
+    notesEl.style.display = "none";
+    editArea.style.display = "block";
+    textarea.value = currentNotes || "";
+    textarea.focus();
+  }
+
+  function cancelEdit(cardEl, originalNotes) {
+    const notesEl = cardEl.querySelector(".notes-display");
+    const editArea = cardEl.querySelector(".edit-area");
+    if (notesEl) {
+      notesEl.style.display = "block";
+      notesEl.innerHTML = originalNotes
+        ? `<div class="appt-notes">${originalNotes}</div>`
+        : `<div class="appt-no-notes">No notes</div>`;
+    }
+    if (editArea) editArea.style.display = "none";
+  }
+
+  // ── Toast ─────────────────────────────────────────────────────────────────
+  function showToast(msg, isError = false) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.className = "toast" + (isError ? " error" : "");
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 3500);
+  }
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  function getAccraToday() { return new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Accra" }); }
 
   function getBucket(dateRaw) {
     const todayStr = getAccraToday();
     const d = new Date(dateRaw);
     const dStr = d.toLocaleDateString("en-CA", { timeZone: "Africa/Accra" });
-
     if (dStr === todayStr) return "today";
-
     const today = new Date(todayStr + "T00:00:00");
-    const diffDays = Math.floor((d - today) / (1000 * 60 * 60 * 24));
-
+    const diffDays = Math.floor((d - today) / 86400000);
     if (diffDays <= 7)  return "week";
     if (diffDays <= 31) return "month";
     return "later";
   }
 
-
-  // ── Render ─────────────────────────────────────────────────────────────────
+  // ── Render ────────────────────────────────────────────────────────────────
   function renderAll() {
     const search = document.getElementById("searchInput").value.toLowerCase().trim();
+    const filtered = search ? allAppointments.filter(a => a.title.toLowerCase().includes(search)) : allAppointments;
 
-    const filtered = search
-      ? allAppointments.filter(a => a.title.toLowerCase().includes(search))
-      : allAppointments;
-
-    // Stats always based on all appointments
     const todayStr = getAccraToday();
-    const weekEnd = new Date(new Date(todayStr + "T00:00:00").getTime() + 7 * 86400000);
+    const weekEnd  = new Date(new Date(todayStr + "T00:00:00").getTime() + 7 * 86400000);
     document.getElementById("statTotal").textContent = allAppointments.length;
     document.getElementById("statToday").textContent = allAppointments.filter(a => a.dateRaw.startsWith(todayStr)).length;
     document.getElementById("statWeek").textContent  = allAppointments.filter(a => new Date(a.dateRaw) <= weekEnd).length;
 
     const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
     if (currentPage > totalPages) currentPage = 1;
-
-    const start = (currentPage - 1) * PAGE_SIZE;
-    const paginated = filtered.slice(start, start + PAGE_SIZE);
+    const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
     document.getElementById("resultCount").textContent = search
       ? `${filtered.length} result${filtered.length !== 1 ? "s" : ""}`
       : `${filtered.length} appointment${filtered.length !== 1 ? "s" : ""}`;
 
     if (filtered.length === 0) {
-      document.getElementById("dashContent").innerHTML = `<div class="state-msg"><div class="icon">🦷</div><p>${search ? "No appointments match your search." : "No upcoming appointments."}</p></div>`;
+      document.getElementById("apptContent").innerHTML = `<div class="state-msg"><div class="icon">🦷</div><p>${search ? "No appointments found." : "No upcoming appointments."}</p></div>`;
       return;
     }
 
-    // Group paginated results into buckets
-    const buckets = { today: [], week: [], month: [], later: [] };
-    paginated.forEach(a => buckets[getBucket(a.dateRaw)].push(a));
-
-    let html = "";
-    ["today", "week", "month", "later"].forEach(bucketKey => {
-      const appts = buckets[bucketKey];
-      if (appts.length === 0) return;
-
-      const byDate = {};
-      appts.forEach(a => {
-        const key = a.dateRaw.split("T")[0];
-        if (!byDate[key]) byDate[key] = [];
-        byDate[key].push(a);
-      });
-
-      Object.entries(byDate).forEach(([, dayAppts]) => {
-        const isToday = bucketKey === "today";
-        if (bucketKey !== "today") {
-          html += `<div style="font-size:0.75rem;font-weight:600;color:var(--muted);margin:0.75rem 0 0.4rem;text-transform:uppercase;letter-spacing:0.08em">${dayAppts[0].date}</div>`;
-        }
-
-        html += `<div class="appt-list">`;
-        dayAppts.forEach(a => {
-          const timeRange = a.timeEnd && a.timeEnd !== a.time
-            ? `${a.time} – ${a.timeEnd}`
-            : a.time;
-
-          const details = a.isWebBooking ? `
-            <div class="appt-details">
-              <div class="appt-detail">
-                <span class="detail-label">Patient</span>
-                <span class="detail-value">${a.patient}</span>
-              </div>
-              <div class="appt-detail">
-                <span class="detail-label">Phone</span>
-                <span class="detail-value"><a href="tel:${(a.phone||'').replace(/\s/g,'')}">${a.phone}</a></span>
-              </div>
-              <div class="appt-detail">
-                <span class="detail-label">Email</span>
-                <span class="detail-value"><a href="mailto:${a.email}">${a.email}</a></span>
-              </div>
-              <div class="appt-detail">
-                <span class="detail-label">Service</span>
-                <span class="detail-value service-badge">${a.service}</span>
-              </div>
-            </div>` : `
-            ${a.notes
-              ? `<div class="appt-notes">${a.notes}</div>`
-              : `<div class="appt-no-notes">No notes</div>`}`;
-
-          const source = a.isWebBooking
-            ? `<span class="source-badge web">🌐 Website</span>`
-            : `<span class="source-badge manual">📝 Manual</span>`;
-
-          html += `<div class="appt-card${isToday ? " today-card" : ""}">
-            <div class="appt-top">
-              <div>
-                <div class="appt-title">${a.title}</div>
-                ${source}
-              </div>
-              <span class="appt-time${isToday ? " today-time" : ""}">🕐 ${timeRange}</span>
-            </div>
-            ${details}
-          </div>`;
-        });
-        html += `</div>`;
-      });
+    // Group by date
+    const byDate = {};
+    paginated.forEach(a => {
+      const key = a.dateRaw.split("T")[0];
+      if (!byDate[key]) byDate[key] = [];
+      byDate[key].push(a);
     });
 
-    // Pagination controls
+    // Count per date from ALL appointments (not just paginated)
+    const allByDate = {};
+    filtered.forEach(a => {
+      const key = a.dateRaw.split("T")[0];
+      allByDate[key] = (allByDate[key] || 0) + 1;
+    });
+
+    let html = "";
+    Object.entries(byDate).forEach(([dateKey, appts]) => {
+      const isToday = dateKey === todayStr;
+      const count   = allByDate[dateKey] || appts.length;
+      const label   = isToday ? `📅 Today — ${appts[0].date}` : appts[0].date;
+
+      html += `<div class="date-group-header">
+        ${label}
+        <span class="day-count">${count} appointment${count !== 1 ? "s" : ""}</span>
+      </div>
+      <div class="appt-list">`;
+
+      appts.forEach(a => {
+        const timeRange = a.timeEnd && a.timeEnd !== a.time ? `${a.time} – ${a.timeEnd}` : a.time;
+        const source    = a.isWebBooking
+          ? `<span class="source-badge web">🌐 Website</span>`
+          : `<span class="source-badge manual">📝 Manual</span>`;
+
+        const notesHtml = a.notes
+          ? `<div class="appt-notes">${a.notes}</div>`
+          : `<div class="appt-no-notes">No notes</div>`;
+
+        const structuredDetails = a.isWebBooking ? `
+          <div class="appt-details">
+            <div class="appt-detail"><span class="detail-label">Patient</span><span class="detail-value">${a.patient}</span></div>
+            <div class="appt-detail"><span class="detail-label">Phone</span><span class="detail-value"><a href="tel:${(a.phone||'').replace(/\s/g,'')}">${a.phone}</a></span></div>
+            <div class="appt-detail"><span class="detail-label">Email</span><span class="detail-value"><a href="mailto:${a.email}">${a.email}</a></span></div>
+            <div class="appt-detail"><span class="detail-label">Service</span><span class="detail-value service-badge">${a.service}</span></div>
+          </div>` : "";
+
+        html += `<div class="appt-card${isToday ? " today-card" : ""}" id="card-${a.id}">
+          <div class="appt-top">
+            <div><div class="appt-title">${a.title}</div>${source}</div>
+            <span class="appt-time${isToday ? " today-time" : ""}">🕐 ${timeRange}</span>
+          </div>
+          ${structuredDetails}
+          <div class="notes-display">${notesHtml}</div>
+          <div class="edit-area" style="display:none">
+            <textarea class="edit-textarea" placeholder="Add notes…"></textarea>
+            <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
+              <button class="save-btn" onclick="saveNotes('${a.id}', this.closest('.appt-card').querySelector('.edit-textarea').value, this.closest('.appt-card'))">Save</button>
+              <button class="cancel-edit-btn" onclick="cancelEdit(this.closest('.appt-card'), '${(a.notes||'').replace(/'/g, "\\'")}')">Cancel</button>
+            </div>
+          </div>
+          <div class="appt-card-actions">
+            <button class="edit-btn" onclick="startEdit('${a.id}', '${(a.notes||'').replace(/'/g, "\\'")}', this.closest('.appt-card'))">✏️ Edit Notes</button>
+          </div>
+        </div>`;
+      });
+
+      html += `</div>`;
+    });
+
+    // Pagination
     if (totalPages > 1) {
       html += `<div class="pagination">`;
-      html += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? "disabled" : ""}>← Prev</button>`;
+      html += `<button class="page-btn" onclick="changePage(${currentPage-1})" ${currentPage===1?"disabled":""}>← Prev</button>`;
       for (let i = 1; i <= totalPages; i++) {
-        if (i === 1 || i === totalPages || Math.abs(i - currentPage) <= 1) {
-          html += `<button class="page-btn${i === currentPage ? " active" : ""}" onclick="changePage(${i})">${i}</button>`;
-        } else if (Math.abs(i - currentPage) === 2) {
-          html += `<span class="page-ellipsis">…</span>`;
-        }
+        if (i===1||i===totalPages||Math.abs(i-currentPage)<=1) html += `<button class="page-btn${i===currentPage?" active":""}" onclick="changePage(${i})">${i}</button>`;
+        else if (Math.abs(i-currentPage)===2) html += `<span class="page-ellipsis">…</span>`;
       }
-      html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? "disabled" : ""}>Next →</button>`;
+      html += `<button class="page-btn" onclick="changePage(${currentPage+1})" ${currentPage===totalPages?"disabled":""}>Next →</button>`;
       html += `</div>`;
     }
 
-    document.getElementById("dashContent").innerHTML = html;
+    document.getElementById("apptContent").innerHTML = html;
   }
 
   function changePage(page) {
     const search = document.getElementById("searchInput").value.toLowerCase().trim();
-    const filtered = search
-      ? allAppointments.filter(a => a.title.toLowerCase().includes(search))
-      : allAppointments;
-    const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-    if (page < 1 || page > totalPages) return;
+    const filtered = search ? allAppointments.filter(a => a.title.toLowerCase().includes(search)) : allAppointments;
+    const total = Math.ceil(filtered.length / PAGE_SIZE);
+    if (page < 1 || page > total) return;
     currentPage = page;
     renderAll();
-    document.getElementById("dashContent").scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById("apptContent").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 </script>
 </body>
