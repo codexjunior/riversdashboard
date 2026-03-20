@@ -317,6 +317,10 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
         <label>Time *</label>
         <input type="time" id="apptTime">
       </div>
+      <div class="form-field">
+        <label>Duration</label>
+        <input type="text" id="apptDuration" placeholder="e.g. 30, 45, 1:30, 2:00 (optional — defaults to 1 hour)">
+      </div>
     </div>
     <div class="form-field">
       <label>Notes / Description</label>
@@ -455,7 +459,8 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
       const res = await fetch(`${API_BASE}/api/manage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: API_TOKEN, password: currentPassword, name, phone, email, date, time, description: desc }),
+        const duration = document.getElementById("apptDuration").value.trim();
+        body: JSON.stringify({ token: API_TOKEN, password: currentPassword, name, phone, email, date, time, duration, description: desc }),,
       });
       const data = await res.json();
       if (res.ok && data.success) {
