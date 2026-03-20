@@ -33,12 +33,15 @@ async function createEvent(calendarApi, { name, phone, email, date, time, descri
   const startDt  = new Date(startIso);
   const endDt    = new Date(startDt.getTime() + 60 * 60 * 1000); // default 1hr
 
-  const desc = [
+  const structuredLines = [
     `Patient: ${name}`,
     `Phone: ${phone}`,
     email ? `Email: ${email}` : null,
-    description ? `\n${description}` : null,
   ].filter(Boolean).join("\n");
+
+  const desc = description
+    ? `${structuredLines}\n\n${description}`
+    : structuredLines;
 
   const event = {
     summary: name,
@@ -58,24 +61,32 @@ async function createEvent(calendarApi, { name, phone, email, date, time, descri
 
 // ─── Update event notes ───────────────────────────────────────────────────────
 async function updateEvent(calendarApi, { eventId, description }) {
-  // Fetch existing event first
   const existing = await calendarApi.events.get({
     calendarId: process.env.GOOGLE_CALENDAR_ID,
     eventId,
   });
   const event = existing.data;
 
-  // Preserve structured fields (Patient, Phone, Email, Service) and replace notes
   const lines = (event.description || "").split("\n");
-  const structuredLines = lines.filter(l =>
+
+  // Keep structured header lines (Patient, Phone, Email, Service, Booked via)
+  const headerLines = lines.filter(l =>
     l.startsWith("Patient:") || l.startsWith("Phone:") ||
     l.startsWith("Email:")   || l.startsWith("Service:") ||
     l.startsWith("Booked via:")
   );
 
-  const newDesc = structuredLines.length > 0
-    ? structuredLines.join("\n") + (description ? `\n\n${description}` : "")
-    : description;
+  // Build new description: headers first, then a separator, then the new notes
+  let newDesc;
+  if (headerLines.length > 0) {
+    newDesc = headerLines.join("\n");
+    if (description && description.trim()) {
+      newDesc += "\n--- Notes ---\n" + description.trim();
+    }
+  } else {
+    // Manual booking — just replace/set notes directly
+    newDesc = description || "";
+  }
 
   const res = await calendarApi.events.patch({
     calendarId: process.env.GOOGLE_CALENDAR_ID,
