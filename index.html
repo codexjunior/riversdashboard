@@ -399,9 +399,10 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
         <label>Gender</label>
         <select id="pGender">
           <option value="">— Select —</option>
-          <option>Male</option>
-          <option>Female</option>
+          <option value="0">Male</option>
+          <option value="1">Female</option>
         </select>
+
       </div>
     </div>
     <div class="form-row">
@@ -429,10 +430,10 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
         <label>Age Category</label>
         <select id="pAgeCategory">
           <option value="">— Select —</option>
-          <option>Child (0-12)</option>
-          <option>Teenager (13-17)</option>
-          <option>Adult (18-59)</option>
-          <option>Senior (60+)</option>
+          <option value="0">Child</option>
+          <option value="1">Teenager</option>
+          <option value="2">Adult</option>
+          <option value="3">Senior</option>
         </select>
       </div>
       <div class="form-field">
@@ -934,7 +935,7 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
   const genderLabel = v => 
   v === 0 ? "Male" : v === 1 ? "Female" : null;
 
-  const ageCategoryLabel = 
+  const ageCategoryLabel = v =>
     v === 0 ? "Child" :
     v === 1 ? "Teenager" : v === 2 ? "Adult" :
     v === 3 ? "Senior" : null;
@@ -1216,12 +1217,14 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
     document.getElementById("pRefNote").style.display = patient ? "block" : "none";
 
     // All other fields — always editable
-    document.getElementById("pGender").value            = patient?.gender            || "";
+
+    
+    document.getElementById("pGender").value      = patient?.gender !== null && patient?.gender !== undefined ? String(patient.gender) : "";
     document.getElementById("pPhone").value             = patient?.phone             || "";
     document.getElementById("pWhatsapp").value          = patient?.whatsapp          || "";
     document.getElementById("pEmail").value             = patient?.email             || "";
     document.getElementById("pBirthdate").value         = patient?.birthdate         || "";
-    document.getElementById("pAgeCategory").value       = patient?.age_category      || "";
+    document.getElementById("pAgeCategory").value = patient?.age_category !== null && patient?.age_category !== undefined ? String(patient.age_category) : "";
     document.getElementById("pCity").value              = patient?.city              || "";
     document.getElementById("pCompany").value           = patient?.company           || "";
     document.getElementById("pProfession").value        = patient?.profession        || "";
@@ -1262,12 +1265,12 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
       token: API_TOKEN, password: currentPassword,
       reference_number:           ref,
       name:                       document.getElementById("pName").value.trim()      || null,
-      gender:                     document.getElementById("pGender").value          || null,
+      gender:                     document.getElementById("pGender").value !== "" ? parseInt(document.getElementById("pGender").value) : null,
       phone:                      document.getElementById("pPhone").value.trim()    || null,
       whatsapp:                   document.getElementById("pWhatsapp").value.trim() || null,
       email:                      document.getElementById("pEmail").value.trim()    || null,
       birthdate:                  document.getElementById("pBirthdate").value.trim()|| null,
-      age_category:               document.getElementById("pAgeCategory").value     || null,
+      age_category:               document.getElementById("pAgeCategory").value !== "" ? parseInt(document.getElementById("pAgeCategory").value) : null,
       city:                       document.getElementById("pCity").value.trim()     || null,
       company:                    document.getElementById("pCompany").value.trim()  || null,
       profession:                 document.getElementById("pProfession").value.trim()|| null,
