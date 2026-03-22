@@ -422,7 +422,7 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
       </div>
       <div class="form-field">
         <label>Date of Birth</label>
-        <input type="text" id="pBirthdate" placeholder="e.g. 01/01/1990">
+        <input type="date" id="pBirthdate">
       </div>
     </div>
     <div class="form-row">
@@ -1202,29 +1202,43 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
   });
 
   // ── Patient modal (new/edit) ───────────────────────────────────────────────
-  function openPatientModal(patient = null) {
+  async function openPatientModal(patient = null) {
     editingPatient = patient ? patient.reference_number : null;
     document.getElementById("patientModalTitle").textContent = patient ? "Edit Patient" : "New Patient";
     document.getElementById("patientFormError").style.display = "none";
 
-    // Reference — editable when creating, locked when editing
+    // Reference — always readonly, auto-generated for new patients
     const refInput = document.getElementById("pRef");
-    refInput.value    = patient?.reference_number || "";
-    refInput.readOnly = !!patient;
-    refInput.style.background = patient ? "var(--light)" : "";
-    refInput.style.color      = patient ? "var(--muted)" : "";
-    refInput.title = patient ? "Reference number cannot be changed" : "";
-    document.getElementById("pRefNote").style.display = patient ? "block" : "none";
-    document.getElementById("pName").value             = patient?.name || ""; 
-    // All other fields — always editable
+    refInput.readOnly = true;
+    refInput.style.background = "var(--light)";
+    refInput.style.color      = "var(--muted)";
 
+    if (patient) {
+      refInput.value = patient.reference_number;
+      document.getElementById("pRefNote").textContent = "🔒 Reference number cannot be changed";
+    } else {
+      refInput.value = "Generating…";
+      document.getElementById("pRefNote").textContent = "🔒 Assigned automatically";
+      // Fetch next reference from API
+      try {
+        const params = new URLSearchParams({ token: API_TOKEN, password: currentPassword, action: "next-ref" });
+        const r = await fetch(`${API_BASE}/api/patients?${params}`);
+        const d = await r.json();
+        refInput.value = d.reference || "";
+      } catch {
+        refInput.value = "";
+        document.getElementById("pRefNote").textContent = "Could not generate reference";
+      }
+    }
     
-    document.getElementById("pGender").value      = patient?.gender !== null && patient?.gender !== undefined ? String(patient.gender) : "";
+    // All other fields — always editable  
+    document.getElementById("pName").value              = patient?.name             || "";
+    document.getElementById("pGender").value            = patient?.gender !== null && patient?.gender !== undefined ? String(patient.gender) : "";
     document.getElementById("pPhone").value             = patient?.phone             || "";
     document.getElementById("pWhatsapp").value          = patient?.whatsapp          || "";
     document.getElementById("pEmail").value             = patient?.email             || "";
     document.getElementById("pBirthdate").value         = patient?.birthdate         || "";
-    document.getElementById("pAgeCategory").value = patient?.age_category !== null && patient?.age_category !== undefined ? String(patient.age_category) : "";
+    document.getElementById("pAgeCategory").value       = patient?.age_category !== null && patient?.age_category !== undefined ? String(patient.age_category) : "";
     document.getElementById("pCity").value              = patient?.city              || "";
     document.getElementById("pCompany").value           = patient?.company           || "";
     document.getElementById("pProfession").value        = patient?.profession        || "";
@@ -1255,7 +1269,7 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
   document.getElementById("submitPatient").addEventListener("click", async () => {
     const ref    = document.getElementById("pRef").value.trim();
     const errEl  = document.getElementById("patientFormError");
-    if (!ref) { errEl.textContent = "Reference number is required."; errEl.style.display = "block"; return; }
+    if (!ref || ref === "Generating…") { errEl.textContent = "Please wait for reference number to generate."; errEl.style.display = "block"; return; }
     errEl.style.display = "none";
 
     const btn = document.getElementById("submitPatient");
