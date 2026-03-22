@@ -1,7 +1,7 @@
 {
   "name": "rivers-dental-dashboard",
   "version": "1.0.0",
-  "description": "Staff appointment dashboard for Rivers Dental Clinic",
+  "description": "Staff dashboard for Rivers Dental Clinic",
   "private": true,
   "engines": {
     "node": ">=18.x"

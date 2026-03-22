@@ -539,8 +539,8 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
   let currentPage     = 1;
 
   // ── Login ──────────────────────────────────────────────────────────────────
-  const savedPw = 'Perfect32@set'; //DEV OPS DELETE THIS: Auto-login for development (remove in production)
-  //const savedPw = localStorage.getItem("rdDashPassword");
+   //const savedPw = 'Perfect32@set'; //DEV OPS DELETE THIS: Auto-login for development (remove in production)
+  const savedPw = localStorage.getItem("rdDashPassword");
   if (savedPw) { document.getElementById("passwordInput").value = savedPw; attemptLogin(); }
 
   document.getElementById("loginBtn").addEventListener("click", attemptLogin);
