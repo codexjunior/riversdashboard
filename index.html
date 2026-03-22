@@ -385,6 +385,10 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
     </div>
     <div class="form-error" id="patientFormError"></div>
     <div style="font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.75rem">Basic Information</div>
+    <div class="form-field">
+      <label>Full Name *</label>
+      <input type="text" id="pName" placeholder="e.g. Kofi Mensah">
+    </div>
     <div class="form-row">
       <div class="form-field">
         <label>Reference Number *</label>
@@ -926,6 +930,18 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
 
   const PATIENT_LIMIT = 20;
 
+  // ── Display label helpers ──────────────────────────────────────────────────
+  const genderLabel = v => 
+  v === 0 ? "Male" : v === 1 ? "Female" : null;
+
+  const ageCategoryLabel = 
+    v === 0 ? "Child" :
+    v === 1 ? "Teenager" : v === 2 ? "Adult" :
+    v === 3 ? "Senior" : null;
+
+  const dateLabel = v =>
+    v ? new Date(v).toLocaleDateString("en-GH", { day:"2-digit", month:"short", year:"2-digit", timeZone:"Africa/Accra" }) : null;
+
   // ── Load patients ──────────────────────────────────────────────────────────
   async function loadPatients(page = 1, search = "") {
     document.getElementById("patientContent").innerHTML = `<div class="state-msg"><div class="icon">👤</div><p>Loading…</p></div>`;
@@ -961,18 +977,18 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
 
     let html = `<div class="patient-list">`;
     allPatients.forEach(p => {
-      const initials = (p.reference_number || "?").slice(0, 2).toUpperCase();
-      const name     = [p.profession, p.city].filter(Boolean).join(" · ") || "—";
+      const initials = (p.name || p.reference_number || "?").split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase();
+      const sub = [p.phone, p.profession, p.city].filter(Boolean).join(" · ") || "—";
       html += `<div class="patient-card" onclick="viewPatient('${escAttr(p.reference_number)}')">
         <div class="patient-avatar">${initials}</div>
         <div class="patient-info">
           <div class="patient-ref">${escHtml(p.reference_number)}</div>
-          <div style="font-size:0.9rem;font-weight:600;color:var(--blue)">${escHtml(p.phone || "No phone")}</div>
-          <div class="patient-phone">${escHtml(name)}</div>
+          <div style="font-size:0.9rem;font-weight:600;color:var(--blue)">${escHtml(p.name || "No name on record")}</div>
+          <div class="patient-phone">${escHtml(sub)}</div>
         </div>
         <div class="patient-meta">
-          ${p.gender ? `<span class="patient-tag">${escHtml(p.gender)}</span>` : ""}
-          ${p.age_category ? `<span class="patient-tag">${escHtml(p.age_category)}</span>` : ""}
+          ${p.gender !== null && p.gender !== undefined ? `<span class="patient-tag">${genderLabel(p.gender) || escHtml(String(p.gender))}</span>` : ""}
+          ${p.age_category !== null && p.age_category !== undefined ? `<span class="patient-tag">${ageCategoryLabel(p.age_category) || escHtml(String(p.age_category))}</span>` : ""}
         </div>
       </div>`;
     });
@@ -1013,7 +1029,7 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
       const iData = await iRes.json();
       const p = pData.patient;
 
-      document.getElementById("detailPatientName").textContent = p.phone || ref;
+      document.getElementById("detailPatientName").textContent = p.name || p.phone || ref;
       document.getElementById("detailPatientRef").textContent  = ref;
 
       const field = (label, val) => `
@@ -1028,9 +1044,9 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
             <div class="detail-section-title">Basic Information</div>
             <div class="detail-grid">
               ${field("Reference", p.reference_number)}
-              ${field("Gender", p.gender)}
-              ${field("Age Category", p.age_category)}
-              ${field("Date of Birth", p.birthdate)}
+              ${field("Gender", genderLabel(p.gender))}
+              ${field("Age Category", ageCategoryLabel(p.age_category))}
+              ${field("Date of Birth", dateLabel(p.birthdate))}
               ${field("Phone", p.phone)}
               ${field("WhatsApp", p.whatsapp)}
               ${field("Email", p.email)}
@@ -1245,6 +1261,7 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
     const body = {
       token: API_TOKEN, password: currentPassword,
       reference_number:           ref,
+      name:                       document.getElementById("pName").value.trim()      || null,
       gender:                     document.getElementById("pGender").value          || null,
       phone:                      document.getElementById("pPhone").value.trim()    || null,
       whatsapp:                   document.getElementById("pWhatsapp").value.trim() || null,
