@@ -1215,7 +1215,7 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
     refInput.style.color      = patient ? "var(--muted)" : "";
     refInput.title = patient ? "Reference number cannot be changed" : "";
     document.getElementById("pRefNote").style.display = patient ? "block" : "none";
-
+    document.getElementById("pName").value             = patient?.name || ""; 
     // All other fields — always editable
 
     
