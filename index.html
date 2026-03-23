@@ -47,7 +47,7 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
 .nav{background:var(--blue);padding:0 1.5rem;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
 .nav-brand{display:flex;align-items:center;gap:0.65rem;text-decoration:none}
 .nav-brand img{width:32px;height:32px;object-fit:contain;border-radius:50%}
-.nav-brand-text{font-family:'Libre Baskerville',serif;font-size:0.9rem;font-weight:700;color:white}
+.nav-brand-text{font-size:0.9rem;font-weight:700;color:white}
 .nav-brand-sub{font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.5);display:block}
 
 /* Desktop nav links */
@@ -85,7 +85,7 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
 /* ── STATS ── */
 .stats-bar{background:white;border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;gap:2rem;align-items:center;flex-wrap:wrap}
 .stat{display:flex;flex-direction:column}
-.stat-val{font-size:1.4rem;font-weight:700;color:var(--blue);font-family:'Libre Baskerville',serif;line-height:1}
+.stat-val{font-size:1.4rem;font-weight:700;color:var(--blue);line-height:1}
 .stat-label{font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:0.2rem}
 .stats-divider{width:1px;height:36px;background:var(--border)}
 
@@ -319,7 +319,7 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
     <div class="controls">
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
-        <input type="text" id="patientSearch" placeholder="Search by name, reference, phone or email…">
+        <input type="text" id="patientSearch" placeholder="Search by name, reference or phone">
       </div>
       <span class="result-count" id="patientCount"></span>
       <button class="btn-ghost" id="refreshPatientsBtn">↻ Refresh</button>
@@ -1275,6 +1275,11 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);mi
     const btn = document.getElementById("submitPatient");
     btn.disabled = true; btn.textContent = "Saving…";
 
+    // Uppercase all text inputs before saving
+    document.querySelectorAll("#patientModal input[type='text'], #patientModal input[type='email']").forEach(el => {
+      el.value = el.value.toUpperCase();
+    });
+    
     const body = {
       token: API_TOKEN, password: currentPassword,
       reference_number:           ref,
