@@ -99,10 +99,15 @@ async function syncToSheets(patient, isNew) {
     ];
 
     if (isNew) {
-      // Append new row
-      await sheets.spreadsheets.values.append({
+      // Get current data to find the true last row
+      const existing = await sheets.spreadsheets.values.get({
         spreadsheetId: sheetId,
-        range,
+        range: "Patient_data!B:B",
+      });
+      const lastRow = (existing.data.values || []).length + 1; // +1 for next empty row
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: sheetId,
+        range: `Patient_data!A${lastRow}:O${lastRow}`,
         valueInputOption: "RAW",
         requestBody: { values: [row] },
       });
@@ -133,10 +138,15 @@ async function syncToSheets(patient, isNew) {
           requestBody: { values: [updateRow] },
         });
       } else {
-        // Row not found in sheet — append it
-        await sheets.spreadsheets.values.append({
+        // Row not found in sheet — find true last row and write there
+        const lastRowData = await sheets.spreadsheets.values.get({
           spreadsheetId: sheetId,
-          range,
+          range: "Patient_data!B:B",
+        });
+        const lastRow = (lastRowData.data.values || []).length + 1;
+        await sheets.spreadsheets.values.update({
+          spreadsheetId: sheetId,
+          range: `Patient_data!A${lastRow}:O${lastRow}`,
           valueInputOption: "RAW",
           requestBody: { values: [row] },
         });
