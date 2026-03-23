@@ -188,12 +188,11 @@ module.exports = async function handler(req, res) {
       .range(offset, offset + limit - 1);
 
     if (search) {
+      // Name uses contains, reference and phone use starts-with
       query = query.or(
-        `reference_number.ilike.%${search}%,` +
         `name.ilike.%${search}%,` +
-        `phone.ilike.%${search}%,` +
-        `email.ilike.%${search}%,` +
-        `city.ilike.%${search}%`
+        `reference_number.ilike.${search}%,` +
+        `phone.ilike.${search}%`
       );
     }
 
