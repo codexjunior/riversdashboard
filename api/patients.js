@@ -71,7 +71,7 @@ async function syncToSheets(patient, isNew) {
   try {
     const sheets   = getSheets();
     const sheetId  = process.env.GOOGLE_SHEET_ID;
-    const range    = "Sheet1!A:N";
+    const range    = "Patient_data!A:O";
 
     // Build the row values in sheet column order
     // Sheet columns: Timestamp | Reference | Name | Gender | Age Category |
@@ -110,7 +110,7 @@ async function syncToSheets(patient, isNew) {
       // Find existing row by reference number and update it
       const existing = await sheets.spreadsheets.values.get({
         spreadsheetId: sheetId,
-        range: "Sheet1!B:B", // Reference number column
+        range: "Patient_data!B:B", // Reference number column
       });
 
       const rows = existing.data.values || [];
@@ -128,7 +128,7 @@ async function syncToSheets(patient, isNew) {
         updateRow[0] = ""; // Don't overwrite timestamp
         await sheets.spreadsheets.values.update({
           spreadsheetId: sheetId,
-          range: `Sheet1!A${rowIndex}:O${rowIndex}`,
+          range: `Patient_data!A${rowIndex}:O${rowIndex}`,
           valueInputOption: "RAW",
           requestBody: { values: [updateRow] },
         });
