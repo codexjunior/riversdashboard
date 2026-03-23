@@ -168,9 +168,16 @@ module.exports = async function handler(req, res) {
 
   // ── GET ───────────────────────────────────────────────────────────────────
   if (req.method === "GET") {
+
+    // Public endpoint — no auth needed, only returns next reference number
+    if (req.query.action === "next-ref-public") {
+      const ref = await getNextReference(supabase);
+      return res.status(200).json({ reference: ref });
+    }
+
     if (!authQuery(req.query)) return res.status(401).json({ error: "Unauthorized" });
 
-    // Generate next reference number
+    // Generate next reference number (authenticated)
     if (req.query.action === "next-ref") {
       const ref = await getNextReference(supabase);
       return res.status(200).json({ reference: ref });
