@@ -42,7 +42,6 @@ module.exports = async function handler(req, res) {
 
   const patient = {
     reference_number:          body.reference_number,
-    timestamp:                 body.timestamp          || null,
     name:                      body.name               || null,
     gender:                    body.gender             !== undefined ? body.gender : null,
     age_category:              body.age_category       !== undefined ? body.age_category : null,
